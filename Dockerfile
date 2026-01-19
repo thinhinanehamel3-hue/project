@@ -25,4 +25,5 @@ ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0", "--server.port=$PORT"]
+CMD streamlit run app.py --server.address=0.0.0.0 --server.port=$PORT
+
