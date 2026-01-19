@@ -2,15 +2,20 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# تثبيت build tools الضرورية
+# تثبيت الأدوات الضرورية لبناء dlib وبعض المكتبات
 RUN apt-get update && apt-get install -y \
     build-essential \
-    libpq-dev \
-    gcc \
+    cmake \
+    libboost-all-dev \
+    libx11-dev \
+    libgtk-3-dev \
+    python3-dev \
  && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
+# تحديث pip قبل التثبيت (مهم مع مكتبات حديثة)
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
