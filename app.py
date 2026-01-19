@@ -144,25 +144,25 @@ class ExamPlatform:
             # Vérifier d'abord si la table existe
             success, error = self.safe_execute("SELECT 1 FROM examens_planifies LIMIT 1")
             if not success:
-                return True, "✅ Table déjà vide"
+                return True, "Table déjà vide"
             
             # Supprimer avec TRUNCATE si possible, sinon DELETE
             try:
                 success, error = self.safe_execute("TRUNCATE examens_planifies CASCADE")
                 if success:
-                    return True, "✅ Tous les examens ont été réinitialisés"
+                    return True, " Tous les examens ont été réinitialisés"
             except:
                 # Fallback: DELETE
                 success, error = self.safe_execute("DELETE FROM examens_planifies")
                 if success:
-                    return True, "✅ Tous les examens ont été réinitialisés"
+                    return True, " Tous les examens ont été réinitialisés"
                 else:
-                    return False, f"❌ Erreur DELETE: {error}"
+                    return False, f" Erreur DELETE: {error}"
             
             return True, "✅ Réinitialisation réussie"
             
         except Exception as e:
-            return False, f"❌ Erreur: {str(e)}"
+            return False, f" Erreur: {str(e)}"
     
     def count_conflicts(self):
         """Compter les conflits"""
@@ -343,14 +343,14 @@ class ExamPlatform:
             }
             
             if succes_count > 0:
-                return True, f"✅ {succes_count} examens planifiés", temps_execution, details
+                return True, f" {succes_count} examens planifiés", temps_execution, details
             else:
                 error_msg = echecs_details[0] if echecs_details else "Erreur inconnue"
-                return False, f"❌ Échec: {error_msg}", temps_execution, details
+                return False, f" Échec: {error_msg}", temps_execution, details
             
         except Exception as e:
             error_msg = str(e)
-            return False, f"❌ Erreur système: {error_msg}", 0, {}
+            return False, f" Erreur système: {error_msg}", 0, {}
     
     # ==================== AJOUT MANUEL ====================
     
@@ -363,7 +363,7 @@ class ExamPlatform:
                 (module_id,)
             )
             if success and self.cursor.fetchone()[0] > 0:
-                return False, "❌ Ce module a déjà un examen planifié"
+                return False, " Ce module a déjà un examen planifié"
             
             # Vérifier si la salle est disponible à cette heure
             success, error = self.safe_execute("""
@@ -372,7 +372,7 @@ class ExamPlatform:
             """, (salle_id, date_heure))
             
             if success and self.cursor.fetchone()[0] > 0:
-                return False, "❌ La salle n'est pas disponible à cette heure"
+                return False, " La salle n'est pas disponible à cette heure"
             
             # Insérer l'examen
             success, error = self.safe_execute("""
@@ -385,12 +385,12 @@ class ExamPlatform:
             
             if success:
                 examen_id = self.cursor.fetchone()[0]
-                return True, f"✅ Examen ajouté avec succès (ID: {examen_id})"
+                return True, f" Examen ajouté avec succès (ID: {examen_id})"
             else:
-                return False, f"❌ Erreur d'insertion: {error}"
+                return False, f" Erreur d'insertion: {error}"
                 
         except Exception as e:
-            return False, f"❌ Erreur: {str(e)}"
+            return False, f" Erreur: {str(e)}"
     
     # ==================== OPTIMISATION ====================
     
@@ -403,13 +403,13 @@ class ExamPlatform:
             conflits_avant = self.count_conflicts()
             
             if conflits_avant == 0:
-                return True, "✅ Aucun conflit à résoudre", 0
+                return True, " Aucun conflit à résoudre", 0
             
             # Récupérer les conflits
             conflicts = self.get_conflicts_details()
             
             if conflicts.empty:
-                return True, "✅ Aucun conflit détecté", 0
+                return True, " Aucun conflit détecté", 0
             
             conflits_resolus = 0
             
@@ -452,14 +452,14 @@ class ExamPlatform:
             
             conflits_apres = self.count_conflicts()
             
-            message = f"✅ Optimisation terminée en {temps_execution}s\n"
-            message += f"📊 Conflits résolus: {conflits_resolus}\n"
-            message += f"📈 Conflits restants: {conflits_apres}"
+            message = f" Optimisation terminée en {temps_execution}s\n"
+            message += f" Conflits résolus: {conflits_resolus}\n"
+            message += f" Conflits restants: {conflits_apres}"
             
             return True, message, temps_execution
             
         except Exception as e:
-            return False, f"❌ Erreur: {str(e)[:200]}", 0
+            return False, f" Erreur: {str(e)[:200]}", 0
     
     # ==================== FONCTION POUR VOIR LA STRUCTURE ====================
     
@@ -685,7 +685,7 @@ class ExamPlatform:
 
 def show_login_page():
     """Page de connexion"""
-    st.title("🎓 Plateforme d'Optimisation des Examens")
+    st.title(" Plateforme d'Optimisation des Examens")
     st.markdown("---")
     
     col1, col2 = st.columns([2, 1])
@@ -694,10 +694,10 @@ def show_login_page():
         st.header("Bienvenue")
         st.markdown("""
         **Fonctionnalités :**
-        - 🤖 Génération AUTOMATIQUE d'emploi du temps
-        - ✏️ Ajout MANUEL d'examens
-        - ⚡ Détection et résolution des conflits
-        - 📊 Interface multi-rôles
+        -  Génération AUTOMATIQUE d'emploi du temps
+        -  Ajout MANUEL d'examens
+        -  Détection et résolution des conflits
+        -  Interface multi-rôles
         
         **Objectifs :**
         - Génération en < 45 secondes
@@ -706,7 +706,7 @@ def show_login_page():
         """)
     
     with col2:
-        st.header("🔐 Connexion")
+        st.header(" Connexion")
         role = st.selectbox(
             "Sélectionnez votre rôle :",
             ["Étudiant", "Professeur", "Chef de département", 
@@ -719,11 +719,11 @@ def show_login_page():
 
 def show_etudiant_dashboard(platform):
     """Dashboard pour étudiant"""
-    st.title("👨‍🎓 Tableau de bord Étudiant")
+    st.title(" Tableau de bord Étudiant")
     st.markdown("---")
     
     # Filtres
-    st.subheader("🔍 Filtres de recherche")
+    st.subheader(" Filtres de recherche")
     
     col1, col2 = st.columns(2)
     
@@ -762,7 +762,7 @@ def show_etudiant_dashboard(platform):
     exams_df = platform.get_student_exams(filters={k: v for k, v in filters.items() if v})
     
     if not exams_df.empty:
-        st.subheader(f"📚 {len(exams_df)} examens trouvés")
+        st.subheader(f" {len(exams_df)} examens trouvés")
         
         # Statistiques
         col1, col2, col3 = st.columns(3)
@@ -773,52 +773,31 @@ def show_etudiant_dashboard(platform):
         with col3:
             st.metric("Formations", exams_df['Formation'].nunique())
         
-        # Affichage des examens
+        # Affichage des examens (SEULEMENT TABLEAU - PAS DE VISUALISATIONS)
         st.dataframe(exams_df, use_container_width=True, height=400)
         
         # Téléchargement
         csv = exams_df.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="📥 Télécharger le planning",
+            label=" Télécharger le planning",
             data=csv,
             file_name=f"planning_examens_{datetime.now().strftime('%Y%m%d')}.csv",
             mime="text/csv",
             use_container_width=True
         )
         
-        # Visualisations
-        st.subheader("📊 Visualisations")
+        # PAS DE VISUALISATIONS GRAPHIQUES POUR L'ÉTUDIANT
         
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            # Examens par jour
-            exams_df['Date'] = pd.to_datetime(exams_df['Date/Heure']).dt.date
-            daily_counts = exams_df.groupby('Date').size().reset_index(name='Examens')
-            
-            fig = px.bar(daily_counts, x='Date', y='Examens',
-                        title="Nombre d'examens par jour")
-            st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            # Répartition par département
-            if selected_dept == "Tous":
-                dept_counts = exams_df['Département'].value_counts().reset_index()
-                dept_counts.columns = ['Département', 'Examens']
-                
-                fig = px.pie(dept_counts, values='Examens', names='Département',
-                            title="Répartition par département")
-                st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("📭 Aucun examen trouvé avec ces critères.")
+        st.info(" Aucun examen trouvé avec ces critères.")
 
 def show_professeur_dashboard(platform):
     """Dashboard pour professeur"""
-    st.title("👨‍🏫 Tableau de bord Professeur")
+    st.title(" Tableau de bord Professeur")
     st.markdown("---")
     
     # Sélection du professeur
-    st.subheader("👤 Sélection du professeur")
+    st.subheader(" Sélection du professeur")
     
     success, error = platform.safe_execute("""
         SELECT DISTINCT CONCAT(p.prenom, ' ', p.nom) as nom_complet
@@ -839,7 +818,7 @@ def show_professeur_dashboard(platform):
             exams_df = platform.get_teacher_exams(teacher_name=selected_prof)
             
             if not exams_df.empty:
-                st.subheader(f"📋 {len(exams_df)} surveillances programmées")
+                st.subheader(f" {len(exams_df)} surveillances programmées")
                 
                 # Statistiques
                 col1, col2, col3 = st.columns(3)
@@ -852,46 +831,45 @@ def show_professeur_dashboard(platform):
                     total_duree = exams_df['Durée (min)'].sum()
                     st.metric("Heures totales", f"{total_duree/60:.1f}h")
                 
-                # Affichage des examens
+                # Affichage des examens (SEULEMENT TABLEAU - PAS DE VISUALISATIONS)
                 st.dataframe(exams_df, use_container_width=True, height=400)
                 
-                # Calendrier des examens
-                st.subheader("🗓️ Calendrier des surveillances")
+                # Liste textuelle simple des examens par date
+                st.subheader(" Liste des surveillances par date")
                 
-                # Convertir pour affichage calendrier
+                # Convertir pour affichage simple
                 exams_df['Date'] = pd.to_datetime(exams_df['Date/Heure']).dt.date
                 exams_df['Heure'] = pd.to_datetime(exams_df['Date/Heure']).dt.strftime('%H:%M')
                 
-                # Afficher par jour
+                # Grouper par date
                 unique_dates = sorted(exams_df['Date'].unique())
                 
                 for date in unique_dates:
-                    with st.expander(f"📅 {date.strftime('%A %d %B %Y')}"):
+                    with st.expander(f" {date.strftime('%A %d %B %Y')}"):
                         day_exams = exams_df[exams_df['Date'] == date]
                         for _, exam in day_exams.iterrows():
-                            st.write(f"**{exam['Heure']}** - {exam['Module']}")
-                            st.write(f"📍 {exam['Salle']} | 📍 {exam['Département']} | ⏱️ {exam['Durée (min)']} min")
-                            st.markdown("---")
+                            st.write(f"• **{exam['Heure']}** - {exam['Module']}")
+                            st.write(f"  Salle: {exam['Salle']} | Département: {exam['Département']} | Durée: {exam['Durée (min)']} min")
                 
                 # Téléchargement
                 csv = exams_df.to_csv(index=False).encode('utf-8')
                 st.download_button(
-                    label="📥 Télécharger mes surveillances",
+                    label=" Télécharger mes surveillances",
                     data=csv,
                     file_name=f"surveillances_{selected_prof.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.csv",
                     mime="text/csv",
                     use_container_width=True
                 )
             else:
-                st.info("📭 Aucune surveillance programmée pour ce professeur.")
+                st.info(" Aucune surveillance programmée pour ce professeur.")
         else:
-            st.warning("⚠️ Aucun professeur n'a d'examens programmés.")
+            st.warning(" Aucun professeur n'a d'examens programmés.")
     else:
-        st.error("❌ Erreur lors de la récupération des professeurs.")
+        st.error(" Erreur lors de la récupération des professeurs.")
 
 def show_chef_departement_dashboard(platform):
     """Dashboard pour chef de département"""
-    st.title("📊 Tableau de bord Chef de Département")
+    st.title(" Tableau de bord Chef de Département")
     st.markdown("---")
     
     # Sélection du département
@@ -899,7 +877,7 @@ def show_chef_departement_dashboard(platform):
     dept_names = [d[1] for d in departments]
     
     if not dept_names:
-        st.error("❌ Aucun département trouvé")
+        st.error(" Aucun département trouvé")
         return
     
     selected_dept = st.selectbox("Votre département", dept_names)
@@ -907,7 +885,7 @@ def show_chef_departement_dashboard(platform):
     st.markdown(f"### Département : **{selected_dept}**")
     
     # Onglets
-    tab1, tab2 = st.tabs(["📈 Vue d'ensemble", "📋 Examens"])
+    tab1, tab2 = st.tabs([" Vue d'ensemble", " Examens"])
     
     with tab1:
         # Statistiques du département
@@ -963,7 +941,7 @@ def show_chef_departement_dashboard(platform):
                 modules_count = platform.cursor.fetchone()[0] or 0
                 st.metric("Modules", modules_count)
         
-        # Graphiques
+        # Graphiques (GARDÉS pour chef de département)
         col1, col2 = st.columns(2)
         
         with col1:
@@ -999,18 +977,18 @@ def show_chef_departement_dashboard(platform):
             # Téléchargement
             csv = exams_df.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Télécharger la liste",
+                label="Télécharger la liste",
                 data=csv,
                 file_name=f"examens_{selected_dept.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv",
                 use_container_width=True
             )
         else:
-            st.info("📭 Aucun examen trouvé pour ce département.")
+            st.info(" Aucun examen trouvé pour ce département.")
 
 def show_administrateur_dashboard(platform):
     """Dashboard administrateur"""
-    st.title("⚙️ Tableau de bord Administrateur")
+    st.title("Tableau de bord Administrateur")
     st.markdown("---")
     
     # Initialiser la variable de session
@@ -1021,7 +999,7 @@ def show_administrateur_dashboard(platform):
     with st.sidebar:
         st.subheader("🔧 Outils de débogage")
         
-        if st.button("📋 Voir structure table"):
+        if st.button(" Voir structure table"):
             structure, constraints = platform.get_table_info()
             
             st.write("**Structure de examens_planifies:**")
@@ -1035,7 +1013,7 @@ def show_administrateur_dashboard(platform):
             else:
                 st.write("Aucune contrainte CHECK trouvée")
         
-        if st.button("🧹 Test réinitialisation simple"):
+        if st.button(" Test réinitialisation simple"):
             with st.spinner("Test en cours..."):
                 success, message = platform.reset_all_exams()
                 if success:
@@ -1045,14 +1023,14 @@ def show_administrateur_dashboard(platform):
     
     # Vérification initiale
     if platform.check_initial_state():
-        st.success("✅ Base prête pour la planification (0 examens existants)")
+        st.success(" Base prête pour la planification (0 examens existants)")
     else:
-        st.warning("⚠️ Il y a déjà des examens planifiés")
+        st.warning(" Il y a déjà des examens planifiés")
         
         # Bouton de réinitialisation
         col1, col2 = st.columns([3, 1])
         with col2:
-            if st.button("🔄 Réinitialiser", type="secondary", use_container_width=True):
+            if st.button(" Réinitialiser", type="secondary", use_container_width=True):
                 with st.spinner("Réinitialisation en cours..."):
                     success, message = platform.reset_all_exams()
                     if success:
@@ -1064,11 +1042,11 @@ def show_administrateur_dashboard(platform):
     st.markdown("---")
     
     # Onglets principaux
-    tab1, tab2, tab3, tab4 = st.tabs(["🤖 Génération AUTO", "✏️ Ajout MANUEL", "📋 EDT Généré", "⚡ Optimisation"])
+    tab1, tab2, tab3, tab4 = st.tabs([" Génération AUTO", " Ajout MANUEL", " EDT Généré", " Optimisation"])
     
     # TAB 1: GÉNÉRATION AUTO
     with tab1:
-        st.subheader("🤖 Génération d'Emploi du Temps")
+        st.subheader("Génération d'Emploi du Temps")
         
         col1, col2 = st.columns(2)
         
@@ -1099,16 +1077,16 @@ def show_administrateur_dashboard(platform):
             # Conflits actuels
             conflits = platform.count_conflicts()
             if conflits > 0:
-                st.error(f"⚠️ {conflits} conflit(s)")
+                st.error(f" {conflits} conflit(s)")
             else:
-                st.success("✅ Aucun conflit")
+                st.success(" Aucun conflit")
             
             # Temps estimé
-            st.info(f"⏱️ Temps estimé: {nb_examens * 0.2:.1f}s")
+            st.info(f" Temps estimé: {nb_examens * 0.2:.1f}s")
             
             # Bouton de test
             st.markdown("---")
-            if st.button("🧪 Test génération (5 examens)"):
+            if st.button(" Test génération (5 examens)"):
                 with st.spinner("Test en cours..."):
                     if st.session_state.reset_before_generate:
                         platform.reset_all_exams()
@@ -1126,7 +1104,7 @@ def show_administrateur_dashboard(platform):
         
         # Bouton de génération principal
         st.markdown("---")
-        if st.button("🚀 GÉNÉRER L'EMPLOI DU TEMPS", type="primary", use_container_width=True):
+        if st.button(" GÉNÉRER L'EMPLOI DU TEMPS", type="primary", use_container_width=True):
             with st.spinner("Génération en cours..."):
                 # Réinitialiser si demandé
                 if st.session_state.reset_before_generate:
@@ -1139,15 +1117,15 @@ def show_administrateur_dashboard(platform):
                 )
                 
                 if succes:
-                    st.success(f"✅ {message}")
+                    st.success(f" {message}")
                     st.metric("Temps d'exécution", f"{temps_exec}s")
                     
                     if temps_exec <= 45:
                         st.balloons()
-                        st.success("🎉 OBJECTIF ATTEINT: < 45 secondes!")
+                        st.success(" OBJECTIF ATTEINT: < 45 secondes!")
                     
                     # Afficher les détails
-                    with st.expander("📊 Détails de la génération"):
+                    with st.expander(" Détails de la génération"):
                         col_a, col_b, col_c = st.columns(3)
                         with col_a:
                             st.metric("Examens créés", details.get('examens_planifies', 0))
@@ -1159,16 +1137,16 @@ def show_administrateur_dashboard(platform):
                     
                     st.rerun()
                 else:
-                    st.error(f"❌ {message}")
+                    st.error(f" {message}")
                     
                     if 'echecs_details' in details and details['echecs_details']:
-                        with st.expander("🔍 Voir les erreurs détaillées"):
+                        with st.expander(" Voir les erreurs détaillées"):
                             for err in details['echecs_details']:
                                 st.write(f"- {err}")
     
     # TAB 2: AJOUT MANUEL
     with tab2:
-        st.subheader("✏️ Ajout Manuel d'Examen")
+        st.subheader(" Ajout Manuel d'Examen")
         
         # Récupérer les données pour les listes déroulantes
         modules = platform.get_modules_sans_examen()
@@ -1176,7 +1154,7 @@ def show_administrateur_dashboard(platform):
         salles = platform.get_all_salles()
         
         if not modules:
-            st.error("❌ Tous les modules ont déjà un examen planifié!")
+            st.error(" Tous les modules ont déjà un examen planifié!")
         else:
             # Formulaire de saisie
             with st.form("form_ajout_manuel"):
@@ -1209,7 +1187,7 @@ def show_administrateur_dashboard(platform):
                 
                 # Aperçu de la saisie
                 st.markdown("---")
-                st.subheader("📋 Aperçu de l'examen")
+                st.subheader(" Aperçu de l'examen")
                 
                 col_a, col_b = st.columns(2)
                 with col_a:
@@ -1221,7 +1199,7 @@ def show_administrateur_dashboard(platform):
                     st.write(f"**Durée :** {duree_minutes} minutes")
                 
                 # Bouton de soumission
-                submitted = st.form_submit_button("➕ AJOUTER L'EXAMEN", type="primary", use_container_width=True)
+                submitted = st.form_submit_button(" AJOUTER L'EXAMEN", type="primary", use_container_width=True)
                 
                 if submitted:
                     with st.spinner("Ajout en cours..."):
@@ -1241,13 +1219,13 @@ def show_administrateur_dashboard(platform):
     
     # TAB 3: AFFICHAGE EDT
     with tab3:
-        st.subheader("📋 Emploi du Temps Généré")
+        st.subheader(" Emploi du Temps Généré")
         
         show_limit = st.selectbox("Nombre d'examens à afficher", [20, 50, 100, 200], index=0)
         timetable = platform.get_generated_timetable(limit=show_limit)
         
         if not timetable.empty:
-            st.write(f"**📊 {len(timetable)} examens planifiés**")
+            st.write(f"** {len(timetable)} examens planifiés**")
             
             # Statistiques rapides
             col1, col2, col3 = st.columns(3)
@@ -1279,16 +1257,43 @@ def show_administrateur_dashboard(platform):
             # Téléchargement
             csv = timetable[available_cols].to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Télécharger l'EDT",
+                label=" Télécharger l'EDT",
                 data=csv,
                 file_name=f"emploi_du_temps_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv",
                 use_container_width=True
             )
             
+            # VISUALISATIONS GRAPHIQUES (GARDÉES pour administrateur)
+            st.markdown("---")
+            st.subheader(" Visualisations")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Examens par jour
+                if 'date_heure' in timetable.columns:
+                    timetable['date_heure'] = pd.to_datetime(timetable['date_heure'])
+                    timetable['Jour'] = timetable['date_heure'].dt.date
+                    daily_counts = timetable.groupby('Jour').size().reset_index(name='Examens')
+                    
+                    fig = px.bar(daily_counts, x='Jour', y='Examens',
+                                title="Nombre d'examens par jour")
+                    st.plotly_chart(fig, use_container_width=True)
+            
+            with col2:
+                # Répartition par département
+                if 'departement' in timetable.columns:
+                    dept_counts = timetable['departement'].value_counts().reset_index()
+                    dept_counts.columns = ['Département', 'Examens']
+                    
+                    fig = px.pie(dept_counts, values='Examens', names='Département',
+                                title="Répartition par département")
+                    st.plotly_chart(fig, use_container_width=True)
+            
             # Bouton de réinitialisation
             st.markdown("---")
-            if st.button("🧹 Réinitialiser cet emploi du temps", type="secondary"):
+            if st.button(" Réinitialiser cet emploi du temps", type="secondary"):
                 with st.spinner("Réinitialisation en cours..."):
                     success, message = platform.reset_all_exams()
                     if success:
@@ -1298,10 +1303,10 @@ def show_administrateur_dashboard(platform):
                         st.error(message)
         
         else:
-            st.info("📭 Aucun emploi du temps généré")
+            st.info(" Aucun emploi du temps généré")
             
             # Suggestions
-            if st.button("🎲 Générer un EDT (10 examens)"):
+            if st.button(" Générer un EDT (10 examens)"):
                 with st.spinner("Génération en cours..."):
                     platform.reset_all_exams()
                     succes, message, temps_exec, details = platform.generate_simple_timetable(
@@ -1310,35 +1315,47 @@ def show_administrateur_dashboard(platform):
                     )
                     
                     if succes:
-                        st.success(f"✅ {message}")
+                        st.success(f" {message}")
                         st.rerun()
                     else:
-                        st.error(f"❌ {message}")
+                        st.error(f" {message}")
     
     # TAB 4: OPTIMISATION
     with tab4:
-        st.subheader("⚡ Optimisation des Conflits")
+        st.subheader(" Optimisation des Conflits")
         
         # État actuel des conflits
         conflits_actuels = platform.count_conflicts()
         
         if conflits_actuels == 0:
-            st.success("✅ Aucun conflit détecté!")
+            st.success(" Aucun conflit détecté!")
         else:
-            st.error(f"⚠️ {conflits_actuels} conflit(s) détecté(s)")
+            st.error(f" {conflits_actuels} conflit(s) détecté(s)")
             
             # Détails des conflits
-            if st.button("🔍 Voir les détails des conflits"):
+            if st.button(" Voir les détails des conflits"):
                 conflicts_df = platform.get_conflicts_details()
                 if not conflicts_df.empty:
                     st.dataframe(conflicts_df, use_container_width=True)
+                    
+                    # VISUALISATION DES CONFLITS (GARDÉE pour administrateur)
+                    fig = go.Figure(data=[go.Table(
+                        header=dict(values=list(conflicts_df.columns),
+                                    fill_color='paleturquoise',
+                                    align='left'),
+                        cells=dict(values=[conflicts_df[col] for col in conflicts_df.columns],
+                                   fill_color='lavender',
+                                   align='left'))
+                    ])
+                    fig.update_layout(title="Tableau des conflits", height=400)
+                    st.plotly_chart(fig, use_container_width=True)
                 else:
-                    st.info("ℹ️ Aucun détail disponible")
+                    st.info(" Aucun détail disponible")
         
         st.markdown("---")
         
         # Bouton d'optimisation
-        if st.button("🚀 Lancer l'optimisation", use_container_width=True):
+        if st.button(" Lancer l'optimisation", use_container_width=True):
             with st.spinner("Optimisation en cours..."):
                 succes, message, temps_exec = platform.optimize_timetable(mode='RAPIDE')
                 
@@ -1351,7 +1368,7 @@ def show_administrateur_dashboard(platform):
 
 def show_doyen_dashboard(platform):
     """Dashboard vice-doyen/doyen"""
-    st.title("🎓 Tableau de bord Direction")
+    st.title("Tableau de bord Direction")
     st.markdown("---")
     
     # KPIs principaux
@@ -1385,7 +1402,7 @@ def show_doyen_dashboard(platform):
     st.markdown("---")
     
     # Onglets
-    tab1, tab2 = st.tabs(["📈 Vue globale", "⚠️ Conflits"])
+    tab1, tab2, tab3 = st.tabs(["📈 Vue globale", "📊 Statistiques détaillées", "⚠️ Conflits"])
     
     with tab1:
         st.subheader("Vue d'ensemble")
@@ -1405,19 +1422,70 @@ def show_doyen_dashboard(platform):
             st.plotly_chart(fig, use_container_width=True)
     
     with tab2:
+        st.subheader("Statistiques détaillées")
+        
+        # Plus de graphiques pour l'analyse
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Distribution des durées d'examen
+            success, error = platform.safe_execute("""
+                SELECT duree_minutes, COUNT(*) 
+                FROM examens_planifies 
+                WHERE statut = 'VALIDE'
+                GROUP BY duree_minutes
+                ORDER BY duree_minutes
+            """)
+            if success:
+                duree_data = platform.cursor.fetchall()
+                if duree_data:
+                    df_duree = pd.DataFrame(duree_data, columns=['Durée (min)', 'Nombre'])
+                    fig = px.bar(df_duree, x='Durée (min)', y='Nombre', title="Distribution des durées")
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        with col2:
+            # Occupation des salles
+            success, error = platform.safe_execute("""
+                SELECT l.nom, COUNT(ep.id) as examens
+                FROM lieu_examen l
+                LEFT JOIN examens_planifies ep ON l.id = ep.salle_id AND ep.statut = 'VALIDE'
+                GROUP BY l.nom
+                ORDER BY examens DESC
+                LIMIT 10
+            """)
+            if success:
+                salle_data = platform.cursor.fetchall()
+                if salle_data:
+                    df_salle = pd.DataFrame(salle_data, columns=['Salle', 'Examens'])
+                    fig = px.bar(df_salle, x='Salle', y='Examens', title="Occupation des salles")
+                    st.plotly_chart(fig, use_container_width=True)
+    
+    with tab3:
         st.subheader("Analyse des Conflits")
         
         conflits = platform.count_conflicts()
         
         if conflits == 0:
-            st.success("✅ Aucun conflit détecté")
+            st.success(" Aucun conflit détecté")
         else:
-            st.error(f"⚠️ {conflits} conflit(s) détecté(s)")
+            st.error(f" {conflits} conflit(s) détecté(s)")
             
             # Détails des conflits
             conflicts_df = platform.get_conflicts_details()
             if not conflicts_df.empty:
                 st.dataframe(conflicts_df, use_container_width=True)
+                
+                # Visualisation des conflits
+                fig = go.Figure(data=[go.Table(
+                    header=dict(values=list(conflicts_df.columns),
+                                fill_color='paleturquoise',
+                                align='left'),
+                    cells=dict(values=[conflicts_df[col] for col in conflicts_df.columns],
+                               fill_color='lavender',
+                               align='left'))
+                ])
+                fig.update_layout(title="Tableau des conflits", height=400)
+                st.plotly_chart(fig, use_container_width=True)
 
 def main():
     """Fonction principale"""
@@ -1426,7 +1494,7 @@ def main():
     platform = ExamPlatform()
     
     if not platform.conn:
-        st.error("❌ Connexion base de données échouée")
+        st.error(" Connexion base de données échouée")
         st.stop()
     
     # Gestion de session
@@ -1440,7 +1508,7 @@ def main():
         # Sidebar
         with st.sidebar:
             st.image("https://img.icons8.com/color/96/000000/university.png", width=80)
-            st.success(f"👤 Connecté: **{st.session_state['role']}**")
+            st.success(f" Connecté: **{st.session_state['role']}**")
             
             # Statistiques rapides
             if st.session_state['role'] in ["Administrateur", "Vice-doyen/Doyen", "Chef de département"]:
@@ -1451,12 +1519,12 @@ def main():
                 
                 conflits = platform.count_conflicts()
                 if conflits > 0:
-                    st.error(f"⚠️ {conflits} conflit(s)")
+                    st.error(f" {conflits} conflit(s)")
                 else:
-                    st.success("✅ Aucun conflit")
+                    st.success(" Aucun conflit")
             
             st.markdown("---")
-            if st.button("🚪 Déconnexion", use_container_width=True):
+            if st.button(" Déconnexion", use_container_width=True):
                 st.session_state.clear()
                 st.rerun()
         
@@ -1475,5 +1543,4 @@ def main():
             show_doyen_dashboard(platform)
 
 if __name__ == "__main__":
-
     main()
