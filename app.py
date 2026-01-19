@@ -23,10 +23,10 @@ st.set_page_config(
 
 # Configuration de la base de données
 DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'exam_platform',
-    'user': 'postgres',
-    'password': 'tinasql',
+    'host': 'dpg-d5mp9675r7bs73da5utg-a.frankfurt-postgres.render.com',
+    'database': 'mydb_lubi',
+    'user': 'mydb_lubi_user',
+    'password': 'IdVcFHisd27xyAS6bJgkz1pv53xcdA7u',
     'port': '5432'
 }
 
@@ -1475,4 +1475,5 @@ def main():
             show_doyen_dashboard(platform)
 
 if __name__ == "__main__":
+
     main()
